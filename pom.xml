@@ -10,7 +10,7 @@
 	</parent>
 
 	<groupId>it.jac</groupId>
-	<artifactId>ManagementSpring</artifactId>
+	<artifactId>Blog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ManagementSpring</name>
 	<description>Management Software</description>
