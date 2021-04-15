@@ -1,0 +1,48 @@
+package it.jac.blog.service.impl;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import it.jac.blog.model.Tag;
+import it.jac.blog.repository.TagRepository;
+import it.jac.blog.service.TagService;
+
+@Service
+public class TagServiceImpl implements TagService {
+	
+	@Autowired
+	TagRepository tagRepository;
+
+	@Override
+	public Optional<Tag> get(Long id) {
+		return tagRepository.findById(id);
+	}
+
+	@Override
+	public Tag create(Tag c) {
+		return tagRepository.save(c);
+	}
+
+	@Override
+	public void createAll(List<Tag> tags) {
+		tagRepository.saveAll(tags);
+	}
+
+	@Override
+	public void delete(Long id) {
+		tagRepository.deleteById(id);
+	}
+
+	@Override
+	public Tag update(Tag tag, Long id) {
+		return tagRepository.findById(id).map(c -> { // update if entity already exists
+			tag.setId(c.getId());
+			return create(tag);
+		}).orElseGet(() -> { // create if entity not exists
+			return tagRepository.save(tag);
+		});
+	}
+}

@@ -8,14 +8,14 @@ import it.jac.blog.model.User;
 public interface UserService {
 	public Optional<User> get(Long id);
 
-	public User getByUsername(String ivaCode);
+	public User getByUsername(String username);
 
-	public User create(User c);
+	public User create(User user);
 
-	public void createAll(List<User> c);
+	public void createAll(List<User> users);
 
 	public void delete(Long id);
 
-	public User update(User c, Long id);
+	public User update(User user, Long id);
 
 }
