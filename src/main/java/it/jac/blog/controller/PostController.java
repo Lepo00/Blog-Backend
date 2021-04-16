@@ -16,57 +16,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.jac.blog.model.ResponseMessage;
-import it.jac.blog.model.User;
-import it.jac.blog.service.UserService;
+import it.jac.blog.model.Post;
+import it.jac.blog.service.PostService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/post")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UserController {
+public class PostController {
 	
 	@Autowired
-	UserService userService;
+	PostService postService;
 
 	//@Secured("ROLE_ADMIN")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
-		Optional<User> c = userService.get(id);
+		Optional<Post> c = postService.get(id);
 		if (c.isPresent()) {
 			return ResponseEntity.ok(c.get());
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User doesn't exists"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Post doesn't exists"));
 		}
 	}
 
 	@PostMapping
-	public ResponseEntity<?> newUser(@RequestBody User user) throws Exception {
+	public ResponseEntity<?> newPost(@RequestBody Post post) throws Exception {
 		try {
-			User save = userService.create(user);
+			Post save = postService.create(post);
 			if (save == null)
 				throw new Exception();
 			return ResponseEntity.ok(save);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new ResponseMessage("User Not Saved!"));
+			return ResponseEntity.badRequest().body(new ResponseMessage("Post Not Saved!"));
 		}
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+	public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody Post post) {
 		try {
-			User update = userService.update(user, id);
+			Post update = postService.update(post, id);
 			return ResponseEntity.ok(update);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new ResponseMessage("User Not Updated!"));
+			return ResponseEntity.badRequest().body(new ResponseMessage("Post Not Updated!"));
 		}
 	}
 
 	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<ResponseMessage> deleteUser(@PathVariable Long id) {
+	public ResponseEntity<ResponseMessage> deletePost(@PathVariable Long id) {
 		try {
-			userService.delete(id);
-			return ResponseEntity.ok().body(new ResponseMessage("User deleted"));
+			postService.delete(id);
+			return ResponseEntity.ok().body(new ResponseMessage("Post deleted"));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User doesn't exists"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Post doesn't exists"));
 		}
 	}
 }

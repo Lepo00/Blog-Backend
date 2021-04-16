@@ -16,57 +16,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.jac.blog.model.ResponseMessage;
-import it.jac.blog.model.User;
-import it.jac.blog.service.UserService;
+import it.jac.blog.model.Image;
+import it.jac.blog.service.ImageService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/image")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UserController {
+public class ImageController {
 	
 	@Autowired
-	UserService userService;
+	ImageService imageService;
 
 	//@Secured("ROLE_ADMIN")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
-		Optional<User> c = userService.get(id);
+		Optional<Image> c = imageService.get(id);
 		if (c.isPresent()) {
 			return ResponseEntity.ok(c.get());
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User doesn't exists"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Image doesn't exists"));
 		}
 	}
 
 	@PostMapping
-	public ResponseEntity<?> newUser(@RequestBody User user) throws Exception {
+	public ResponseEntity<?> newImage(@RequestBody Image image) throws Exception {
 		try {
-			User save = userService.create(user);
+			Image save = imageService.create(image);
 			if (save == null)
 				throw new Exception();
 			return ResponseEntity.ok(save);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new ResponseMessage("User Not Saved!"));
+			return ResponseEntity.badRequest().body(new ResponseMessage("Image Not Saved!"));
 		}
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+	public ResponseEntity<?> updateImage(@PathVariable Long id, @RequestBody Image image) {
 		try {
-			User update = userService.update(user, id);
+			Image update = imageService.update(image, id);
 			return ResponseEntity.ok(update);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new ResponseMessage("User Not Updated!"));
+			return ResponseEntity.badRequest().body(new ResponseMessage("Image Not Updated!"));
 		}
 	}
 
 	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<ResponseMessage> deleteUser(@PathVariable Long id) {
+	public ResponseEntity<ResponseMessage> deleteImage(@PathVariable Long id) {
 		try {
-			userService.delete(id);
-			return ResponseEntity.ok().body(new ResponseMessage("User deleted"));
+			imageService.delete(id);
+			return ResponseEntity.ok().body(new ResponseMessage("Image deleted"));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User doesn't exists"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Image doesn't exists"));
 		}
 	}
 }

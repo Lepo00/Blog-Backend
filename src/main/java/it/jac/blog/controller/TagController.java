@@ -16,57 +16,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.jac.blog.model.ResponseMessage;
-import it.jac.blog.model.User;
-import it.jac.blog.service.UserService;
+import it.jac.blog.model.Tag;
+import it.jac.blog.service.TagService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/tag")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UserController {
-	
-	@Autowired
-	UserService userService;
+public class TagController {
 
-	//@Secured("ROLE_ADMIN")
+	@Autowired
+	TagService tagService;
+
+	// @Secured("ROLE_ADMIN")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
-		Optional<User> c = userService.get(id);
+		Optional<Tag> c = tagService.get(id);
 		if (c.isPresent()) {
 			return ResponseEntity.ok(c.get());
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User doesn't exists"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Tag doesn't exists"));
 		}
 	}
 
 	@PostMapping
-	public ResponseEntity<?> newUser(@RequestBody User user) throws Exception {
+	public ResponseEntity<?> newTag(@RequestBody Tag tag) throws Exception {
 		try {
-			User save = userService.create(user);
+			Tag save = tagService.create(tag);
 			if (save == null)
 				throw new Exception();
 			return ResponseEntity.ok(save);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new ResponseMessage("User Not Saved!"));
+			return ResponseEntity.badRequest().body(new ResponseMessage("Tag Not Saved!"));
 		}
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+	public ResponseEntity<?> updateTag(@PathVariable Long id, @RequestBody Tag tag) {
 		try {
-			User update = userService.update(user, id);
+			Tag update = tagService.update(tag, id);
 			return ResponseEntity.ok(update);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(new ResponseMessage("User Not Updated!"));
+			return ResponseEntity.badRequest().body(new ResponseMessage("Tag Not Updated!"));
 		}
 	}
 
 	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<ResponseMessage> deleteUser(@PathVariable Long id) {
+	public ResponseEntity<ResponseMessage> deleteTag(@PathVariable Long id) {
 		try {
-			userService.delete(id);
-			return ResponseEntity.ok().body(new ResponseMessage("User deleted"));
+			tagService.delete(id);
+			return ResponseEntity.ok().body(new ResponseMessage("Tag deleted"));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User doesn't exists"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Tag doesn't exists"));
 		}
 	}
 }
