@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,18 +30,18 @@ public class AppConfiguration extends WebSecurityConfigurerAdapter implements We
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests()
-				.antMatchers(
-						"/auth/token",
-						"/swagger.json",
-						"/webjars/**",
-						"/swagger-resources/**",
-						"/api",
-						"api-docs"
-						)
-				.permitAll().anyRequest().authenticated().and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http
+        .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+        .csrf().disable()
+        .authorizeRequests()
+            .antMatchers("/api","api-docs","/user/my-articles").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth/token").permitAll()
+            .antMatchers(HttpMethod.GET, "/article/**").permitAll()
+            .anyRequest().authenticated();
 
+		
 		// Add a filter to validate the tokens with every request
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 	}

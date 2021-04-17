@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,11 +19,17 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import it.jac.blog.model.User;
+import it.jac.blog.service.UserService;
 
 @Component
 public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -2550185165626007488L;
+	private static final String AUTH ="Authorization";
+	private static final String BEARER ="Bearer ";
+	
+	@Autowired
+	UserService userService;
 
 	@Value("${jwt.expiration}")
 	public long expiration;
@@ -30,14 +37,14 @@ public class JwtTokenUtil implements Serializable {
 	@Value("${jwt.secret}")
 	private String secret;
 
-//generate token for user
+	// generate token for user
 	public String generateToken(User userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("role", userDetails.getRole());
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
 
-//validate token
+	// validate token
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = getUsernameFromToken(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
@@ -48,21 +55,32 @@ public class JwtTokenUtil implements Serializable {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
+	//retrieve username from header request
 	public String getUsernameFromToken(HttpServletRequest request) {
-		final String requestTokenHeader = request.getHeader("Authorization");
-		String jwtToken = requestTokenHeader.substring("Bearer ".length());
+		final String requestTokenHeader = request.getHeader(AUTH);
+		String jwtToken = requestTokenHeader.substring(BEARER.length());
 		return getClaimFromToken(jwtToken, Claims::getSubject);
 	}
 
+	//retrieve username without anything
 	public String getUsernameFromToken() {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		final String requestTokenHeader = request.getHeader("Authorization");
-		String jwtToken = requestTokenHeader.substring("Bearer ".length());
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		final String requestTokenHeader = request.getHeader(AUTH);
+		String jwtToken = requestTokenHeader.substring(BEARER.length());
 		return getClaimFromToken(jwtToken, Claims::getSubject);
 	}
+	
+	public User getUserFromToken() {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		final String jwtToken = request.getHeader(AUTH).substring(BEARER.length());
+		Claims attr= getAllClaimsFromToken(jwtToken);
+		User user = userService.getByUsername((String)attr.get("sub"));
+		if(user!=null && user.getRole().toString().equals(attr.get("role")))
+			return user;
+		return null;
+	}
 
-//retrieve expiration date from jwt token
+	// retrieve expiration date from jwt token
 	public Date getExpirationDateFromToken(String token) {
 		return getClaimFromToken(token, Claims::getExpiration);
 	}

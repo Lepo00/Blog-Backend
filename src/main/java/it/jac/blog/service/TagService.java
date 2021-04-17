@@ -3,6 +3,7 @@ package it.jac.blog.service;
 import java.util.List;
 import java.util.Optional;
 
+import it.jac.blog.model.Article;
 import it.jac.blog.model.Tag;
 
 public interface TagService {
@@ -15,5 +16,7 @@ public interface TagService {
 	public void delete(Long id);
 
 	public Tag update(Tag tag, Long id);
+	
+	public List<Tag> alreadyExists(Article article);
 
 }

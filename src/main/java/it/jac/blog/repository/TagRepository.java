@@ -7,4 +7,5 @@ import it.jac.blog.model.Tag;
 
 @Repository("tagRepository")
 public interface TagRepository extends JpaRepository<Tag, Long> {
+	Tag findByCode(String code);
 }

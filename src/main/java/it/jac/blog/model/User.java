@@ -1,10 +1,14 @@
 package it.jac.blog.model;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -43,5 +47,8 @@ public class User extends AuditModel {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Role role;
-
+	
+	@OneToMany
+	@JoinColumn(name = "user_id")
+	private List<Article> articles;
 }

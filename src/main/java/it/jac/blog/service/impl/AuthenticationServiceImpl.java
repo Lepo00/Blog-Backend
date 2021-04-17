@@ -20,7 +20,7 @@ import it.jac.blog.model.User;
 import it.jac.blog.repository.UserRepository;
 
 @Service
-public class AuthenticationService implements UserDetailsService, AuthenticationManager {
+public class AuthenticationServiceImpl implements UserDetailsService, AuthenticationManager {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;

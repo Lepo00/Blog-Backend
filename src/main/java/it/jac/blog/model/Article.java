@@ -26,7 +26,7 @@ import lombok.Setter;
 @Table
 @Getter
 @Setter
-public class Post extends AuditModel {
+public class Article extends AuditModel {
 	@Column(length = 50)
 	private String title;
 
@@ -38,15 +38,15 @@ public class Post extends AuditModel {
 	private Status status;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	@JoinTable(name = "article_tag", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	private List<Tag> tags;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "post_id")
+	@JoinColumn(name = "article_id")
 	private List<Comment> comments;
 
 	@ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)
-	@CollectionTable(name = "post_category", joinColumns = @JoinColumn(name = "post_id"))
+	@CollectionTable(name = "article_category", joinColumns = @JoinColumn(name = "article_id"))
 	@Enumerated(EnumType.STRING)
 	@Column(name = "category")
 	private List<Category> categories;

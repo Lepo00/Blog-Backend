@@ -1,18 +1,21 @@
 package it.jac.blog.service.impl;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.jac.blog.model.Article;
 import it.jac.blog.model.Tag;
 import it.jac.blog.repository.TagRepository;
 import it.jac.blog.service.TagService;
 
 @Service
 public class TagServiceImpl implements TagService {
-	
+
 	@Autowired
 	TagRepository tagRepository;
 
@@ -44,5 +47,31 @@ public class TagServiceImpl implements TagService {
 		}).orElseGet(() -> { // create if entity not exists
 			return tagRepository.save(tag);
 		});
+	}
+
+	@Override
+	public List<Tag> alreadyExists(Article article) {
+		Tag t;
+		List<Tag> tags = new ArrayList<>();
+		List<String> codes = new ArrayList<>();
+		LinkedHashSet<String> noDuplicates;
+
+		for (Tag tag : article.getTags())
+			codes.add(tag.getCode());
+
+		noDuplicates = new LinkedHashSet<>(codes);
+
+		for (String code : noDuplicates) {
+			t = tagRepository.findByCode(code);
+			if (t != null && !tags.contains(t)) {
+				tags.add(t);
+			} else {
+				Tag a = new Tag();
+				a.setCode(code);
+				tags.add(a);
+			}
+		}
+
+		return tags;
 	}
 }
