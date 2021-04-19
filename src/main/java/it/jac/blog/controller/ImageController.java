@@ -1,9 +1,14 @@
 package it.jac.blog.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,5 +71,28 @@ public class ImageController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Image doesn't exists"));
 		}
+	}
+	
+	@GetMapping(path = "/display/{id}")
+	public ResponseEntity<byte[]> display(@PathVariable long id) {
+		String basedir=System.getProperty("java.io.tmpdir")+"uploads\\";
+		System.out.println(basedir);
+		Image image=imageService.get(id).get();
+		
+		File file = new File(basedir + image.getFilename());
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		try (FileInputStream in= new FileInputStream(file)){
+			int i;
+			byte[] cache = new byte[1000 * 1024];
+			while ((i = in.read(cache)) > -1)
+				out.write(cache, 0, i);
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		HttpHeaders headers= new HttpHeaders();
+		headers.setContentType(MediaType.IMAGE_JPEG);
+		return new ResponseEntity<>(out.toByteArray(),headers, HttpStatus.OK);
 	}
 }

@@ -46,7 +46,7 @@ public class AppConfiguration extends WebSecurityConfigurerAdapter implements We
         .authorizeRequests()
             .antMatchers("/api","/api-docs","/user/my-articles","/auth/token").permitAll()
             //.antMatchers(HttpMethod.POST, "/auth/token").permitAll()
-            .antMatchers(HttpMethod.GET, "/article/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/article/**", "/image/**").permitAll()
             .anyRequest().authenticated();
 		
 		// Add a filter to validate the tokens with every request
