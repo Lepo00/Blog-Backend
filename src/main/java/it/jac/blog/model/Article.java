@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import it.jac.blog.enums.Category;
@@ -50,4 +51,7 @@ public class Article extends AuditModel {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "category")
 	private List<Category> categories;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	private Image image;
 }
