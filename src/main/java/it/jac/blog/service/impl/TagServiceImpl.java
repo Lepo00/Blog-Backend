@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import it.jac.blog.model.Article;
 import it.jac.blog.model.Tag;
 import it.jac.blog.repository.TagRepository;
 import it.jac.blog.service.TagService;
@@ -50,13 +49,13 @@ public class TagServiceImpl implements TagService {
 	}
 
 	@Override
-	public List<Tag> alreadyExists(Article article) {
+	public List<Tag> alreadyExists(List<Tag> tagsDuplicated) {
 		Tag t;
 		List<Tag> tags = new ArrayList<>();
 		List<String> codes = new ArrayList<>();
 		LinkedHashSet<String> noDuplicates;
 
-		for (Tag tag : article.getTags())
+		for (Tag tag : tagsDuplicated)
 			codes.add(tag.getCode());
 
 		noDuplicates = new LinkedHashSet<>(codes);

@@ -12,7 +12,7 @@ import it.jac.blog.service.ArticleService;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
-	
+
 	@Autowired
 	ArticleRepository articleRepository;
 
@@ -20,7 +20,7 @@ public class ArticleServiceImpl implements ArticleService {
 	public Optional<Article> get(Long id) {
 		return articleRepository.findById(id);
 	}
-	
+
 	@Override
 	public List<Article> getFirstArticleLimit(Long limit) {
 		return articleRepository.findFirstArticlesLimit(limit);

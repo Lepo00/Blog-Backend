@@ -1,5 +1,6 @@
 package it.jac.blog.controller;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -14,13 +15,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import it.jac.blog.enums.Role;
+import it.jac.blog.enums.Status;
 import it.jac.blog.model.Article;
+import it.jac.blog.model.Image;
 import it.jac.blog.model.ResponseMessage;
 import it.jac.blog.model.User;
 import it.jac.blog.security.JwtTokenUtil;
 import it.jac.blog.service.ArticleService;
+import it.jac.blog.service.ImageService;
 import it.jac.blog.service.TagService;
 import it.jac.blog.service.UserService;
 
@@ -33,11 +40,13 @@ public class UserController {
 	@Autowired
 	ArticleService articleService;
 	@Autowired
+	ImageService imageService;
+	@Autowired
 	TagService tagService;
 	@Autowired
 	JwtTokenUtil tokenUtil;
 
-	//@Secured("ROLE_ADMIN")
+	// @Secured("ROLE_ADMIN")
 	@PatchMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
 		Optional<User> c = userService.get(id);
@@ -79,34 +88,51 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User doesn't exists"));
 		}
 	}
-	
+
 	@GetMapping(path = "/my-articles")
 	public ResponseEntity<?> getMyArticles() {
-		User user=tokenUtil.getUserFromToken();
-		if(user.getArticles().isEmpty())
+		User user = tokenUtil.getUserFromToken();
+		if (user.getArticles().isEmpty())
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You don't have any articles");
 		else
 			return ResponseEntity.ok(user.getArticles());
 	}
 
 	@PostMapping(path = "/addArticle")
-	public ResponseEntity<?> addArticle(@RequestBody Article article) {
+	public ResponseEntity<?> addArticle(@RequestPart Article article, @RequestPart(required = false) MultipartFile image) {
 		try {
 			User user = tokenUtil.getUserFromToken();
-
 			if (article.getId() != null && articleService.get(article.getId()).isPresent())
 				return ResponseEntity.badRequest().body("Article already exists");
-			
-			article.setTags(tagService.alreadyExists(article));
-					
+			article.setTags(tagService.alreadyExists(article.getTags()));
+
+			if (user.getRole().equals(Role.ADMIN))
+				article.setStatus(Status.APPROVED);
+			else
+				article.setStatus(Status.PENDING);
+
+			if (image != null) {
+				imageService.upload(image);
+				Image t = new Image();
+				t.setFilename(image.getOriginalFilename());
+				t.setTitle(image.getOriginalFilename());
+				article.setImage(t);
+			}
+
 			user.getArticles().add(article);
 			articleService.create(article);
 			userService.update(user, user.getId());
-			return ResponseEntity.ok(user);
+			return ResponseEntity.ok(article);
+
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("User not found"));
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ResponseMessage("Image not uploaded"));
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.badRequest().body(new ResponseMessage(e.toString()));
 		}
 	}
+
 }

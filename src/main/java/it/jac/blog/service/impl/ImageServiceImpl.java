@@ -1,10 +1,17 @@
 package it.jac.blog.service.impl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import it.jac.blog.model.Image;
 import it.jac.blog.repository.ImageRepository;
@@ -44,5 +51,14 @@ public class ImageServiceImpl implements ImageService {
 		}).orElseGet(() -> { // create if entity not exists
 			return imageRepository.save(image);
 		});
+	}
+
+	@Override
+	public void upload(MultipartFile image) throws IOException {
+		String basedir=System.getProperty("java.io.tmpdir")+"uploads\\"+image.getOriginalFilename();
+			if(ImageIO.read(image.getInputStream())!=null) {
+				Path path = Paths.get(basedir);
+			    Files.write(path, image.getBytes());	
+			}
 	}
 }

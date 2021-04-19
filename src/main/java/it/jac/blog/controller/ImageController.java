@@ -76,7 +76,6 @@ public class ImageController {
 	@GetMapping(path = "/display/{id}")
 	public ResponseEntity<byte[]> display(@PathVariable long id) {
 		String basedir=System.getProperty("java.io.tmpdir")+"uploads\\";
-		System.out.println(basedir);
 		Image image=imageService.get(id).get();
 		
 		File file = new File(basedir + image.getFilename());
