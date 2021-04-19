@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -27,6 +28,12 @@ public class AppConfiguration extends WebSecurityConfigurerAdapter implements We
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	@Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
+    }
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -34,13 +41,13 @@ public class AppConfiguration extends WebSecurityConfigurerAdapter implements We
         .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
+        .cors().and()
         .csrf().disable()
         .authorizeRequests()
-            .antMatchers("/api","api-docs","/user/my-articles").permitAll()
-            .antMatchers(HttpMethod.POST, "/auth/token").permitAll()
+            .antMatchers("/api","/api-docs","/user/my-articles","/auth/token").permitAll()
+            //.antMatchers(HttpMethod.POST, "/auth/token").permitAll()
             .antMatchers(HttpMethod.GET, "/article/**").permitAll()
             .anyRequest().authenticated();
-
 		
 		// Add a filter to validate the tokens with every request
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
