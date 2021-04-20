@@ -118,7 +118,7 @@ public class UserController {
 				imageService.upload(image);
 				Image t = new Image();
 				t.setFilename(image.getOriginalFilename());
-				t.setTitle(image.getOriginalFilename());
+				t.setTitle(image.getOriginalFilename().substring(0, 29));
 				article.setImage(t);
 			}
 
