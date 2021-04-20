@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,6 @@ public class TagController {
 	@Autowired
 	TagService tagService;
 
-	// @Secured("ROLE_ADMIN")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
 		Optional<Tag> c = tagService.get(id);
@@ -36,6 +36,7 @@ public class TagController {
 		}
 	}
 
+	@Secured("ROLE_WRITER")
 	@PostMapping
 	public ResponseEntity<?> newTag(@RequestBody Tag tag) throws Exception {
 		try {
@@ -48,6 +49,7 @@ public class TagController {
 		}
 	}
 
+	@Secured("ROLE_WRITER")
 	@PutMapping(path = "/{id}")
 	public ResponseEntity<?> updateTag(@PathVariable Long id, @RequestBody Tag tag) {
 		try {
@@ -58,6 +60,7 @@ public class TagController {
 		}
 	}
 
+	@Secured("ROLE_WRITER")
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<ResponseMessage> deleteTag(@PathVariable Long id) {
 		try {

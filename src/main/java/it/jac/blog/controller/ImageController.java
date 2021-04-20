@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +31,6 @@ public class ImageController {
 	@Autowired
 	ImageService imageService;
 
-	//@Secured("ROLE_ADMIN")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
 		Optional<Image> c = imageService.get(id);
@@ -41,6 +41,7 @@ public class ImageController {
 		}
 	}
 
+	@Secured("ROLE_WRITER")
 	@PostMapping
 	public ResponseEntity<?> newImage(@RequestBody Image image) throws Exception {
 		try {
@@ -53,6 +54,7 @@ public class ImageController {
 		}
 	}
 
+	@Secured("ROLE_WRITER")
 	@PutMapping(path = "/{id}")
 	public ResponseEntity<?> updateImage(@PathVariable Long id, @RequestBody Image image) {
 		try {
@@ -63,6 +65,7 @@ public class ImageController {
 		}
 	}
 
+	@Secured("ROLE_WRITER")
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<ResponseMessage> deleteImage(@PathVariable Long id) {
 		try {

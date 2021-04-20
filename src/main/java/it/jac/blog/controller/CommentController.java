@@ -25,7 +25,6 @@ public class CommentController {
 	@Autowired
 	CommentService commentService;
 
-	//@Secured("ROLE_ADMIN")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
 		Optional<Comment> c = commentService.get(id);

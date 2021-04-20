@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,7 +47,7 @@ public class UserController {
 	@Autowired
 	JwtTokenUtil tokenUtil;
 
-	// @Secured("ROLE_ADMIN")
+	@Secured("ROLE_ADMIN")
 	@PatchMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
 		Optional<User> c = userService.get(id);
@@ -89,6 +90,7 @@ public class UserController {
 		}
 	}
 
+	@Secured("ROLE_WRITER")
 	@GetMapping(path = "/my-articles")
 	public ResponseEntity<?> getMyArticles() {
 		User user = tokenUtil.getUserFromToken();
@@ -98,6 +100,7 @@ public class UserController {
 			return ResponseEntity.ok(user.getArticles());
 	}
 
+	@Secured("ROLE_WRITER")
 	@PostMapping(path = "/addArticle")
 	public ResponseEntity<?> addArticle(@RequestPart Article article, @RequestPart(required = false) MultipartFile image) {
 		try {

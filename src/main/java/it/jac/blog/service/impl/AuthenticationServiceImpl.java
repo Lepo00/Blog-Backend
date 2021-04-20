@@ -27,10 +27,10 @@ public class AuthenticationServiceImpl implements UserDetailsService, Authentica
 	@Autowired
 	private UserRepository userRepository;
 	
-	private static final SimpleGrantedAuthority ROLE_USER= new SimpleGrantedAuthority("ROLE_USER");
-	private static final SimpleGrantedAuthority ROLE_WRITER= new SimpleGrantedAuthority("ROLE_WRITER");
-	private static final SimpleGrantedAuthority ROLE_REVIEWER= new SimpleGrantedAuthority("ROLE_REVIEWER");
-	private static final SimpleGrantedAuthority ROLE_ADMIN= new SimpleGrantedAuthority("ROLE_ADMIN");
+	private static final SimpleGrantedAuthority USER= new SimpleGrantedAuthority("ROLE_USER");
+	private static final SimpleGrantedAuthority WRITER= new SimpleGrantedAuthority("ROLE_WRITER");
+	private static final SimpleGrantedAuthority REVIEWER= new SimpleGrantedAuthority("ROLE_REVIEWER");
+	private static final SimpleGrantedAuthority ADMIN= new SimpleGrantedAuthority("ROLE_ADMIN");
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,22 +38,22 @@ public class AuthenticationServiceImpl implements UserDetailsService, Authentica
 		List<GrantedAuthority> grantedAuths = new ArrayList<>();
 		switch (user.getRole()) {
 			case ADMIN:
-				grantedAuths.add(ROLE_USER);
-				grantedAuths.add(ROLE_WRITER);
-				grantedAuths.add(ROLE_REVIEWER);
-				grantedAuths.add(ROLE_ADMIN);
+				grantedAuths.add(USER);
+				grantedAuths.add(WRITER);
+				grantedAuths.add(REVIEWER);
+				grantedAuths.add(ADMIN);
 				break;
 			case REVIEWER:
-				grantedAuths.add(ROLE_USER);
-				grantedAuths.add(ROLE_WRITER);
-				grantedAuths.add(ROLE_REVIEWER);
+				grantedAuths.add(USER);
+				grantedAuths.add(WRITER);
+				grantedAuths.add(REVIEWER);
 				break;
 			case WRITER:
-				grantedAuths.add(ROLE_USER);
-				grantedAuths.add(ROLE_WRITER);
+				grantedAuths.add(USER);
+				grantedAuths.add(WRITER);
 				break;
 			default:
-				grantedAuths.add(ROLE_USER);
+				grantedAuths.add(USER);
 		}
 		return new org.springframework.security.core.userdetails.User(user.getUsername(),
 				bCryptPasswordEncoder.encode(user.getPassword()), grantedAuths);
