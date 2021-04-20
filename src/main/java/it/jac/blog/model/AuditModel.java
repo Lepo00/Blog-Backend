@@ -26,7 +26,7 @@ import lombok.Setter;
 @SuppressWarnings("serial")
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = { "createdAt", "updatedAt" })
+@JsonIgnoreProperties(value = { "createdAt", "updatedAt", "hibernateLazyInitializer", "handler" })
 @Getter
 @Setter
 public abstract class AuditModel implements Serializable {

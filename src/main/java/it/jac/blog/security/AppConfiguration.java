@@ -44,9 +44,9 @@ public class AppConfiguration extends WebSecurityConfigurerAdapter implements We
         .cors().and()
         .csrf().disable()
         .authorizeRequests()
-            .antMatchers("/api","/api-docs","/user/my-articles").permitAll()
-            .antMatchers(HttpMethod.POST, "/auth/token").permitAll()
-            .antMatchers(HttpMethod.GET, "/article/**", "/image/**").permitAll()
+            .antMatchers("/api","/api-docs").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth/token", "/user").permitAll()
+            .antMatchers(HttpMethod.GET, "/article/**", "/image/**", "/user/my-articles").permitAll()
             .anyRequest().authenticated();
 		
 		// Add a filter to validate the tokens with every request

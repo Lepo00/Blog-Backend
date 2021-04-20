@@ -13,12 +13,16 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import it.jac.blog.enums.Category;
 import it.jac.blog.enums.Status;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +31,7 @@ import lombok.Setter;
 @Table
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class Article extends AuditModel {
 	@Column(length = 50)
 	private String title;
@@ -54,4 +59,8 @@ public class Article extends AuditModel {
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	private Image image;
+	
+	@JsonBackReference
+	@ManyToOne(fetch = FetchType.LAZY)
+    private User author;
 }

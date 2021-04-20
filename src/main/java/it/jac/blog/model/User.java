@@ -7,10 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import it.jac.blog.enums.Role;
 import lombok.Getter;
@@ -34,6 +35,9 @@ public class User extends AuditModel {
 
 	@Column
 	private String fullName;
+	
+	@Column(columnDefinition = "TEXT")
+	private String description;
 
 	@Column
 	private String address;
@@ -47,8 +51,8 @@ public class User extends AuditModel {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Role role;
-	
-	@OneToMany
-	@JoinColumn(name = "user_id")
+
+	@JsonManagedReference
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Article> articles;
 }
