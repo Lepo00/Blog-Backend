@@ -11,7 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.jac.blog.enums.Role;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User extends AuditModel {
-	@Column(unique = true)
+	@Column(unique = true, updatable = false)
 	private String username;
 
 	@Column(unique = true)
@@ -35,7 +35,7 @@ public class User extends AuditModel {
 
 	@Column
 	private String fullName;
-	
+
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
@@ -52,7 +52,7 @@ public class User extends AuditModel {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@JsonManagedReference
+	@JsonIgnore
 	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Article> articles;
 }

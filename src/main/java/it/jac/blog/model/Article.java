@@ -18,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import it.jac.blog.enums.Category;
 import it.jac.blog.enums.Status;
 import lombok.EqualsAndHashCode;
@@ -57,10 +55,9 @@ public class Article extends AuditModel {
 	@Column(name = "category")
 	private List<Category> categories;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Image image;
 	
-	@JsonBackReference
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     private User author;
 }

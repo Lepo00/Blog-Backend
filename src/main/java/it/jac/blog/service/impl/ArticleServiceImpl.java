@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import it.jac.blog.enums.Category;
 import it.jac.blog.model.Article;
+import it.jac.blog.model.User;
 import it.jac.blog.repository.ArticleRepository;
 import it.jac.blog.service.ArticleService;
 
@@ -49,6 +52,26 @@ public class ArticleServiceImpl implements ArticleService {
 		}).orElseGet(() -> { // create if entity not exists
 			return articleRepository.save(article);
 		});
+	}
+
+	@Override
+	public List<Article> myArticlesPage(User author, PageRequest page) {
+		return articleRepository.findByAuthor(author, page);
+	}
+
+	@Override
+	public List<Article> getByCategory(Category category, PageRequest page) {
+		return articleRepository.findByCategories(category, page);
+	}
+
+	@Override
+	public List<Article> searchByTitle(String title, PageRequest page) {
+		return articleRepository.findByTitleContaining(title, page);
+	}
+
+	@Override
+	public Long searchSize(String title) {
+		return articleRepository.countSearch(title);
 	}
 
 }
