@@ -103,10 +103,11 @@ public class UserController {
 		if (user.getArticles().isEmpty())
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You don't have any articles");
 
-		List<Article> articles = articleService.myArticlesPage(user, PageRequest.of(page, size, Sort.by("id").descending()));
+		List<Article> articles = articleService.myArticlesPage(user,
+				PageRequest.of(page, size, Sort.by("id").descending()));
 		return ResponseEntity.ok(articles);
 	}
-	
+
 	@Secured("ROLE_WRITER")
 	@GetMapping(path = "/my-articles-size")
 	public ResponseEntity<Integer> getMyArticlesSize() {
@@ -116,8 +117,7 @@ public class UserController {
 
 	@Secured("ROLE_WRITER")
 	@PostMapping(path = "/addArticle")
-	public ResponseEntity<?> addArticle(
-			@RequestPart Article article,
+	public ResponseEntity<?> addArticle(@RequestPart Article article,
 			@RequestPart(required = false) MultipartFile image) {
 		try {
 			User user = tokenUtil.getUserFromToken();
@@ -132,10 +132,11 @@ public class UserController {
 				article.setStatus(Status.PENDING);
 
 			if (image != null) {
+				String name = image.getOriginalFilename();
 				imageService.upload(image);
 				Image t = new Image();
-				t.setFilename(image.getOriginalFilename());
-				t.setTitle(image.getOriginalFilename().substring(0, 29));
+				t.setFilename(name);
+				t.setTitle(name.length() <30 ? name : name.substring(0, 29));
 				article.setImage(t);
 			}
 
