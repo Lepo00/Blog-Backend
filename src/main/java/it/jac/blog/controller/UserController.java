@@ -109,9 +109,9 @@ public class UserController {
 	
 	@Secured("ROLE_WRITER")
 	@GetMapping(path = "/my-articles-size")
-	public ResponseEntity<ResponseMessage> getMyArticlesSize() {
+	public ResponseEntity<Integer> getMyArticlesSize() {
 		User user = tokenUtil.getUserFromToken();
-		return ResponseEntity.ok(new ResponseMessage(user.getArticles().size()+""));
+		return ResponseEntity.ok(user.getArticles().size());
 	}
 
 	@Secured("ROLE_WRITER")

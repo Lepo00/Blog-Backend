@@ -61,7 +61,7 @@ public class TagServiceImpl implements TagService {
 		noDuplicates = new LinkedHashSet<>(codes);
 
 		for (String code : noDuplicates) {
-			t = tagRepository.findByCode(code);
+			t = tagRepository.findFirst1ByCode(code);
 			if (t != null && !tags.contains(t)) {
 				tags.add(t);
 			} else {
