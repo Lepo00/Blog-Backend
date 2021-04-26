@@ -19,6 +19,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
 	List<Article> findByAuthor(User author, Pageable page);
 
+	List<Article> findByStatus(Status status);
+
 	List<Article> findByCategoriesAndStatusNot(Category category, Status status, Pageable page);
 
 	List<Article> findByTitleContainingAndStatusNot(String title, Status status, Pageable page);

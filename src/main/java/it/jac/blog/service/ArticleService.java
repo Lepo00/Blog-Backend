@@ -22,14 +22,16 @@ public interface ArticleService {
 
 	public Article update(Article article, Long id);
 	
-	public List<Article> myArticlesPage(User author, PageRequest page);
+	public List<Article> getMyArticlesPage(User author, PageRequest page);
 	
 	public List<Article> getByCategory(Category category, PageRequest page);
 	
 	public Long categorySize(Category category);
 	
-	public List<Article> searchByTitle(String title, PageRequest page);
+	public List<Article> getSearchByTitle(String title, PageRequest page);
 	
 	public Long searchSize(String title);
+	
+	public List<Article> getPendingArticles();
 	
 }

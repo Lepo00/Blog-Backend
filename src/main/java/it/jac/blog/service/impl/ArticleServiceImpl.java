@@ -56,7 +56,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public List<Article> myArticlesPage(User author, PageRequest page) {
+	public List<Article> getMyArticlesPage(User author, PageRequest page) {
 		return articleRepository.findByAuthor(author, page);
 	}
 
@@ -66,7 +66,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public List<Article> searchByTitle(String title, PageRequest page) {
+	public List<Article> getSearchByTitle(String title, PageRequest page) {
 		return articleRepository.findByTitleContainingAndStatusNot(title, Status.PENDING, page);
 	}
 
@@ -79,6 +79,11 @@ public class ArticleServiceImpl implements ArticleService {
 	public Long categorySize(Category category) {
 		return (long) articleRepository
 				.findByCategoriesAndStatusNot(category, Status.PENDING, PageRequest.of(0, Integer.MAX_VALUE)).size();
+	}
+
+	@Override
+	public List<Article> getPendingArticles() {
+		return articleRepository.findByStatus(Status.PENDING);
 	}
 
 }

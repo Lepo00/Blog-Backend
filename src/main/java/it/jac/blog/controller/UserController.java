@@ -103,7 +103,7 @@ public class UserController {
 		if (user.getArticles().isEmpty())
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You don't have any articles");
 
-		List<Article> articles = articleService.myArticlesPage(user,
+		List<Article> articles = articleService.getMyArticlesPage(user,
 				PageRequest.of(page, size, Sort.by("id").descending()));
 		return ResponseEntity.ok(articles);
 	}

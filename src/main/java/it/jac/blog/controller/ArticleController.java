@@ -68,7 +68,7 @@ public class ArticleController {
 	@GetMapping(path = "/search")
 	public ResponseEntity<?> searchByTitle(@RequestParam String title, @RequestParam Integer page,
 			@RequestParam Integer size) {
-		List<Article> articles = articleService.searchByTitle(title,
+		List<Article> articles = articleService.getSearchByTitle(title,
 				PageRequest.of(page, size, Sort.by("id").descending()));
 		return ResponseEntity.ok(articles);
 	}
@@ -125,11 +125,11 @@ public class ArticleController {
 	}
 	
 	@Secured("ROLE_ADMIN")
-	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<ResponseMessage> pendingArticles(@PathVariable Long id) {
+	@GetMapping(path = "/pending")
+	public ResponseEntity<?> pendingArticles() {
 		try {
-			articleService.delete(id);
-			return ResponseEntity.ok().body(new ResponseMessage("Article deleted"));
+			List<Article> articles= articleService.getPendingArticles();
+			return ResponseEntity.ok().body(articles);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("No articles have pending status"));
 		}
