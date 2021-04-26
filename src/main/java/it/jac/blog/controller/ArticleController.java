@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.jac.blog.enums.Category;
+import it.jac.blog.enums.Role;
 import it.jac.blog.enums.Status;
 import it.jac.blog.model.Article;
 import it.jac.blog.model.ResponseMessage;
+import it.jac.blog.model.User;
 import it.jac.blog.security.JwtTokenUtil;
 import it.jac.blog.service.ArticleService;
 
@@ -38,11 +40,14 @@ public class ArticleController {
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
 		Optional<Article> c = articleService.get(id);
-		if (c.isPresent() && c.get().getStatus() == Status.APPROVED
-				|| c.get().getAuthor().getUsername() == tokenUtil.getUserFromToken().getUsername()) {
-			return ResponseEntity.ok(c.get());
+		User user = tokenUtil.getUserFromToken();
+		Article article = c.isPresent() ? c.get() : null;
+		if (article != null && (article.getStatus() == Status.APPROVED || article.getAuthor().equals(user)
+				|| user.getRole() == Role.ADMIN)) {
+			return ResponseEntity.ok(article);
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Article doesn't exists"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ResponseMessage("Article doesn't exists or you aren't allowed to see it"));
 		}
 	}
 
@@ -116,6 +121,17 @@ public class ArticleController {
 			return ResponseEntity.ok().body(new ResponseMessage("Article deleted"));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Article doesn't exists"));
+		}
+	}
+	
+	@Secured("ROLE_ADMIN")
+	@DeleteMapping(path = "/{id}")
+	public ResponseEntity<ResponseMessage> pendingArticles(@PathVariable Long id) {
+		try {
+			articleService.delete(id);
+			return ResponseEntity.ok().body(new ResponseMessage("Article deleted"));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("No articles have pending status"));
 		}
 	}
 
