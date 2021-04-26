@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.jac.blog.enums.Category;
+import it.jac.blog.enums.Status;
 import it.jac.blog.model.Article;
 import it.jac.blog.model.ResponseMessage;
+import it.jac.blog.security.JwtTokenUtil;
 import it.jac.blog.service.ArticleService;
 
 @RestController
@@ -30,11 +32,14 @@ public class ArticleController {
 
 	@Autowired
 	ArticleService articleService;
+	@Autowired
+	JwtTokenUtil tokenUtil;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> get(@PathVariable Long id) {
 		Optional<Article> c = articleService.get(id);
-		if (c.isPresent()) {
+		if (c.isPresent() && c.get().getStatus() == Status.APPROVED
+				|| c.get().getAuthor().getUsername() == tokenUtil.getUserFromToken().getUsername()) {
 			return ResponseEntity.ok(c.get());
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Article doesn't exists"));
@@ -42,27 +47,36 @@ public class ArticleController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getByCategory(@RequestParam Category category, @RequestParam Integer page, @RequestParam Integer size) {
-		List<Article> articles = articleService.getByCategory(category, PageRequest.of(page, size, Sort.by("id").descending()));
+	public ResponseEntity<?> getByCategory(@RequestParam Category category, @RequestParam Integer page,
+			@RequestParam Integer size) {
+		List<Article> articles = articleService.getByCategory(category,
+				PageRequest.of(page, size, Sort.by("id").descending()));
 		return ResponseEntity.ok(articles);
 	}
-	
+
+	@GetMapping(path = "/category-size")
+	public ResponseEntity<Long> categorySize(@RequestParam Category category) {
+		Long count = articleService.categorySize(category);
+		return ResponseEntity.ok(count);
+	}
+
 	@GetMapping(path = "/search")
-	public ResponseEntity<?> searchByTitle(@RequestParam String title, @RequestParam Integer page, @RequestParam Integer size) {
-		List<Article> articles = articleService.searchByTitle(title, PageRequest.of(page, size, Sort.by("id").descending()));
+	public ResponseEntity<?> searchByTitle(@RequestParam String title, @RequestParam Integer page,
+			@RequestParam Integer size) {
+		List<Article> articles = articleService.searchByTitle(title,
+				PageRequest.of(page, size, Sort.by("id").descending()));
 		return ResponseEntity.ok(articles);
 	}
-	
+
 	@GetMapping(path = "/search-size")
 	public ResponseEntity<Long> searchSize(@RequestParam String title) {
 		Long count = articleService.searchSize(title);
 		return ResponseEntity.ok(count);
 	}
 
-	
-	@GetMapping("/limit/{n}")
-	public ResponseEntity<?> getFirstLimit(@PathVariable Long n) {
-		List<Article> c = articleService.getFirstArticleLimit(n);
+	@GetMapping("/limit")
+	public ResponseEntity<?> getFirstLimit() {
+		List<Article> c = articleService.getFirst7ArticleLimit();
 		if (!c.isEmpty()) {
 			return ResponseEntity.ok(c);
 		} else {
