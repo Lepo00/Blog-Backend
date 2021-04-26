@@ -55,7 +55,7 @@ public class Article extends AuditModel {
 	@Column(name = "category")
 	private List<Category> categories;
 	
-	@OneToOne
+	@OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	private Image image;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
