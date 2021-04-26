@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import it.jac.blog.enums.Category;
+import it.jac.blog.enums.Status;
 import it.jac.blog.model.Article;
 import it.jac.blog.model.User;
 import it.jac.blog.repository.ArticleRepository;
@@ -25,8 +26,8 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public List<Article> getFirstArticleLimit(Long limit) {
-		return articleRepository.findFirstArticlesLimit(limit);
+	public List<Article> getFirst7ArticleLimit() {
+		return articleRepository.findFirst7ByStatusNotOrderByIdDesc(Status.PENDING);
 	}
 
 	@Override
@@ -61,17 +62,23 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<Article> getByCategory(Category category, PageRequest page) {
-		return articleRepository.findByCategories(category, page);
+		return articleRepository.findByCategoriesAndStatusNot(category, Status.PENDING, page);
 	}
 
 	@Override
 	public List<Article> searchByTitle(String title, PageRequest page) {
-		return articleRepository.findByTitleContaining(title, page);
+		return articleRepository.findByTitleContainingAndStatusNot(title, Status.PENDING, page);
 	}
 
 	@Override
 	public Long searchSize(String title) {
-		return articleRepository.countSearch(title);
+		return articleRepository.countSearch(title, Status.PENDING);
+	}
+
+	@Override
+	public Long categorySize(Category category) {
+		return (long) articleRepository
+				.findByCategoriesAndStatusNot(category, Status.PENDING, PageRequest.of(0, Integer.MAX_VALUE)).size();
 	}
 
 }
