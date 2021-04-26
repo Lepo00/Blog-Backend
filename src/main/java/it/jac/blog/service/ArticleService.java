@@ -12,7 +12,7 @@ import it.jac.blog.model.User;
 public interface ArticleService {
 	public Optional<Article> get(Long id);
 
-	public List<Article> getFirstArticleLimit(Long limit);
+	public List<Article> getFirst7ArticleLimit();
 	
 	public Article create(Article article);
 
@@ -25,6 +25,8 @@ public interface ArticleService {
 	public List<Article> myArticlesPage(User author, PageRequest page);
 	
 	public List<Article> getByCategory(Category category, PageRequest page);
+	
+	public Long categorySize(Category category);
 	
 	public List<Article> searchByTitle(String title, PageRequest page);
 	
