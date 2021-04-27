@@ -72,7 +72,9 @@ public class JwtTokenUtil implements Serializable {
 	
 	public User getUserFromToken() {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		final String jwtToken = request.getHeader(AUTH).substring(BEARER.length());
+		final String jwtToken = request.getHeader(AUTH)!=null? request.getHeader(AUTH).substring(BEARER.length()) : null;
+		if(jwtToken==null)
+			return null;
 		Claims attr= getAllClaimsFromToken(jwtToken);
 		User user = userService.getByUsername((String)attr.get("sub"));
 		if(user!=null && user.getRole().toString().equals(attr.get("role")))
