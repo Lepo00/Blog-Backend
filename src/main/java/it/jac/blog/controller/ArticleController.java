@@ -113,36 +113,42 @@ public class ArticleController {
 		}
 	}
 
-	@Secured("ROLE_REVIEWER")
+	@Secured("ROLE_WRITER")
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<ResponseMessage> deleteArticle(@PathVariable Long id) {
+		User user=tokenUtil.getUserFromToken();
 		try {
-			articleService.delete(id);
-			return ResponseEntity.ok().body(new ResponseMessage("Article deleted"));
+			if (articleService.get(id).get().getAuthor().equals(user) || user.getRole()==Role.ADMIN) {
+				articleService.delete(id);
+				return ResponseEntity.ok().body(new ResponseMessage("Article deleted"));
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage("You aren't allowed to delete this article!"));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Article doesn't exists"));
 		}
 	}
-	
+
 	@Secured("ROLE_ADMIN")
 	@GetMapping(path = "/pending")
 	public ResponseEntity<?> pendingArticles() {
 		try {
-			List<Article> articles= articleService.getPendingArticles();
+			List<Article> articles = articleService.getPendingArticles();
 			return ResponseEntity.ok().body(articles);
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("No articles have pending status"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ResponseMessage("No articles have pending status"));
 		}
 	}
-	
+
 	@Secured("ROLE_ADMIN")
 	@PutMapping(path = "/approve/{id}")
 	public ResponseEntity<?> approvedArticle(@PathVariable Long id) {
 		try {
 			articleService.approveArticle(id);
-			return ResponseEntity.ok().body("Article "+id+" approved!");
+			return ResponseEntity.ok().body("Article " + id + " approved!");
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("No articles have pending status"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ResponseMessage("No articles have pending status"));
 		}
 	}
 
