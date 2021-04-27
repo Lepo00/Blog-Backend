@@ -134,5 +134,16 @@ public class ArticleController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("No articles have pending status"));
 		}
 	}
+	
+	@Secured("ROLE_ADMIN")
+	@PutMapping(path = "/approve/{id}")
+	public ResponseEntity<?> approvedArticle(@PathVariable Long id) {
+		try {
+			articleService.approveArticle(id);
+			return ResponseEntity.ok().body("Article "+id+" approved!");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("No articles have pending status"));
+		}
+	}
 
 }

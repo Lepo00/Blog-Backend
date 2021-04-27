@@ -86,4 +86,11 @@ public class ArticleServiceImpl implements ArticleService {
 		return articleRepository.findByStatus(Status.PENDING);
 	}
 
+	@Override
+	public void approveArticle(Long id) {
+		Article article= get(id).get();
+		article.setStatus(Status.APPROVED);
+		update(article, id);
+	}
+
 }

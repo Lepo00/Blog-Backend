@@ -34,4 +34,6 @@ public interface ArticleService {
 	
 	public List<Article> getPendingArticles();
 	
+	public void approveArticle(Long id);
+	
 }
